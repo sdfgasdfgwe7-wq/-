@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<backgrounds>
+    <background>
+        <id>1</id>
+        <name>默认背景</name>
+        <path>backgrounds/background.mp4</path>
+        <price>0</price>
+    </background>
+    <background>
+        <id>2</id>
+        <name>怀旧</name>
+        <path>backgrounds/background_old.png</path>
+        <price>1000000</price>
+    </background>
+</backgrounds>

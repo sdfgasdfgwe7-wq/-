@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>暗区保险模拟试玩版</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/icon.css">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/achievements.css">
+<style>
+@font-face {
+    font-family: 'Arena Breakout1';
+    src: url('fonts/Arena Breakout.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Arena Breakout2';
+    src: url('fonts/Arena Breakout 2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+#gm-debug-section { display: none !important; }
+body[data-gm="1"] #gm-debug-section { display: block !important; }
+.profile-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: opacity 0.2s;
+}
+.profile-title-row:hover {
+    opacity: 0.8;
+}
+.title-label {
+    color: #94a3b8;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+.profile-title-text {
+    color: #f59e0b;
+    font-size: 13px;
+    font-weight: 600;
+    flex: 1;
+}
+.title-arrow {
+    color: #64748b;
+    font-size: 11px;
+}
+#title-modal .modal-content {
+    width: 550px;
+    max-height: 45vh;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    background: #0f1419;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+}
+#title-modal .modal-header {
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+#title-modal .modal-title {
+    color: #e2e8f0;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#title-modal .modal-close {
+    color: #94a3b8;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+}
+#title-modal .modal-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0px;
+    padding: 5px;
+    overflow: hidden;
+}
+#title-modal .title-layout {
+    display: flex;
+    gap: 24px;
+    flex: 1;
+    min-height: 0px;
+    overflow: hidden;
+}
+#title-modal .title-left {
+    width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+    min-height: 0px;
+}
+#title-modal .title-current-display {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+}
+#title-modal .title-current-label {
+    color: #94a3b8;
+    font-size: 9px;
+    margin-bottom: 1px;
+}
+#title-modal .title-current-name {
+    color: #f59e0b;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 0 6px rgba(245,158,11,0.3);
+    word-break: break-all;
+    line-height: 1.1;
+}
+#title-modal .title-progress-section {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+#title-modal .title-progress-header {
+    display: flex;
+    justify-content: space-between;
+    color: #94a3b8;
+    font-size: 9px;
+    margin-bottom: 5px;
+}
+#title-modal .title-progress-bar-container {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+#title-modal .title-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+#title-modal .title-progress-text {
+    color: #64748b;
+    font-size: 9px;
+    text-align: center;
+}
+#title-modal .title-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0px;
+    overflow: hidden;
+}
+#title-modal .title-list-header {
+    color: #e2e8f0;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+#title-modal .title-list {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0px;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148,163,184,0.3) transparent;
+    -webkit-overflow-scrolling: touch;
+}
+#title-modal .title-list::-webkit-scrollbar {
+    width: 6px;
+}
+#title-modal .title-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+#title-modal .title-list::-webkit-scrollbar-thumb {
+    background-color: rgba(148,163,184,0.3);
+    border-radius: 3px;
+}
+#title-modal .title-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    transition: all 0.2s;
+}
+#title-modal .title-list-item.locked {
+    opacity: 0.38;
+}
+#title-modal .title-list-item.current {
+    background: rgba(245,158,11,0.09);
+    border: 1px solid rgba(245,158,11,0.27);
+}
+#title-modal .title-list-item:hover {
+    background: rgba(255,255,255,0.045);
+}
+#title-modal .title-item-icon {
+    width: 37px;
+    height: 37px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.35);
+    font-size: 17px;
+    flex-shrink: 0;
+}
+#title-modal .title-list-item.unlocked .title-item-icon {
+    color: #f59e0b;
+}
+#title-modal .title-list-item.locked .title-item-icon {
+    color: #64748b;
+}
+#title-modal .title-item-info {
+    flex: 1;
+    min-width: 0;
+}
+#title-modal .title-item-name {
+    color: #e2e8f0;
+    font-size: 14px;
+    font-weight: 540;
+}
+#title-modal .title-item-desc {
+    color: #94a3b8;
+    font-size: 11px;
+    margin-top: 2px;
+}
+#title-modal .title-item-requirement {
+    color: #64748b;
+    font-size: 10px;
+    margin-top: 2px;
+}
+#title-modal .title-item-status {
+    flex-shrink: 0;
+}
+#title-modal .title-status-badge {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-weight: 510;
+    white-space: nowrap;
+}
+#title-modal .current-badge {
+    background: rgba(251,191,36,0.185);
+    color: #fbbf24;
+}
+#title-modal .unlocked-badge {
+    background: rgba(74,222,128,0.175);
+    color: #4ade80;
+}
+#title-modal .locked-badge {
+    background: rgba(71,85,105,0.215);
+    color: #94a3b8;
+}
+.bg-preview-image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+.bg-lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    z-index: 10;
+    pointer-events: none;
+}
+.bg-lock-overlay i {
+    font-size: 56px;
+    color: rgba(255,255,255,0.25);
+    filter: drop-shadow(0 0 12px rgba(0,0,0,0.5));
+}
+.bg-select-modal-footer {
+    padding: 10px 16px !important;
+    gap: 10px !important;
+}
+.sidebar-section {
+    margin-bottom: 2px;
+}
+.sidebar-section .sidebar-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    padding: 10px 0;
+    transition: opacity 0.2s;
+    margin: 0;
+}
+.sidebar-section .sidebar-section-header:hover {
+    opacity: 0.8;
+}
+.sidebar-section .sidebar-section-header h4 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+.sidebar-section .collapse-icon {
+    font-size: 12px;
+    color: #64748b;
+    transition: transform 0.35s ease;
+    margin-left: 8px;
+}
+.sidebar-section .sidebar-section-body {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.3s ease;
+}
+.sidebar-section.expanded > .sidebar-section-body {
+    max-height: 2000px;
+    opacity: 1;
+}
+.sidebar-section.expanded > .sidebar-section-header .collapse-icon {
+    transform: rotate(180deg);
+}
+.sidebar-section.collapsible > .sidebar-section-header {
+    cursor: pointer;
+}
+.sidebar-section.default-open > .sidebar-section-body {
+    max-height: 2000px;
+    opacity: 1;
+}
+.sidebar-section.default-open > .sidebar-section-header .collapse-icon {
+    display: none;
+}
+.sidebar-section.hidden-section {
+    display: none;
+}
+</style>
+<script>
+(function(){
+    var gm = localStorage.getItem('ab_gm_unlocked') === 'true';
+    document.body.setAttribute('data-gm', gm ? '1' : '0');
+})();
+</script>
+</head>
+<body>
+<div class="top-right-meta" id="topRightMeta">
+<span class="meta-version" id="metaVersionDisplay">Arena Breakout Safebox Simulator v1.6.0</span>
+<span class="meta-uid" id="metaUidDisplay">试玩版玩家</span>
+</div>
+<div class="loading-overlay" id="loading-overlay">
+<div class="loading-container">
+<div class="loading-text">暗区突围保险模拟试玩版</div>
+<div class="loading-text"></div>
+<div class="loading-spinner"></div>
+<div class="loading-text">Loading•••</div>
+<div class="loading-progress">
+<div class="loading-progress-bar" id="loading-progress-bar"></div>
+</div>
+<div class="loading-tip" id="loading-tip"></div>
+</div>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<h3><i class="fas fa-bars"></i> 更多功能</h3>
+<button class="sidebar-close" id="sidebar-close">&times;</button>
+</div>
+<div class="sidebar-content">
+<div class="sidebar-section default-open" id="profile-section-wrapper">
+<div class="sidebar-section-header" data-target="section-personal">
+<h4><i class="fas fa-chart-line"></i> 个人数据</h4>
+<i class="fas fa-chevron-down collapse-icon"></i>
+</div>
+<div class="sidebar-section-body" id="section-personal">
+<div class="profile-section" id="profile-section">
+<div class="profile-avatar-wrapper" id="profile-avatar-wrapper">
+<img id="profile-avatar" src="pictures/avatar.png" alt="头像">
+<div id="profile-avatar-hover"><i class="fas fa-camera"></i></div>
+<input type="file" id="profile-avatar-input" accept="image/*">
+</div>
+<div class="profile-info">
+<div class="profile-name-row">
+<span id="profile-nickname">试玩版玩家</span>
+<i class="fas fa-pen" id="profile-edit-nickname-icon"></i>
+</div>
+</div>
+</div>
+<div class="stats-item">
+<div class="stats-label">累计价值</div>
+<div class="stats-value" id="accumulated-value">¥0</div>
+</div>
+</div>
+</div>
+<div class="sidebar-section" id="gm-debug-section">
+<div class="sidebar-section-header" data-target="section-gm">
+<h4><i class="fas fa-boxes"></i> GM Debug</h4>
+<i class="fas fa-chevron-down collapse-icon"></i>
+</div>
+<div class="sidebar-section-body" id="section-gm">
+<button class="sidebar-btn" id="sidebar-item-control-btn"><i class="fas fa-sliders-h"></i> Item pool management</button>
+<button class="sidebar-btn" id="edit-accumulated-value-btn"><i class="fas fa-coins"></i> Edit accumulated value</button>
+<button class="sidebar-btn email-mgmt-btn" onclick="SimpleMail.openAdminPanel()"><i class="fas fa-cog"></i> Email management</button>
+<button class="sidebar-btn" id="gm-delete-by-uid-btn"><i class="fas fa-user-minus"></i> Delete leaderboard by UID</button>
+</div>
+</div>
+<div class="sidebar-section collapsible">
+<div class="sidebar-section-header" data-target="section-settings">
+<h4><i class="fas fa-ellipsis-h"></i> 背景设置</h4>
+<i class="fas fa-chevron-down collapse-icon"></i>
+</div>
+<div class="sidebar-section-body" id="section-settings">
+<div class="font-switch-container">
+<button class="sidebar-btn" id="sidebar-bg-select-btn"><i class="fas fa-palette"></i> 切换背景</button>
+</div>
+</div>
+</div>
+<div class="sidebar-section collapsible">
+<div class="sidebar-section-header" data-target="section-info">
+<h4><i class="fas fa-info-circle"></i> 更多信息</h4>
+<i class="fas fa-chevron-down collapse-icon"></i>
+</div>
+<div class="sidebar-section-body" id="section-info">
+<button class="sidebar-btn" id="sidebar-credits-btn"><i class="fas fa-users"></i> 制作人员列表</button>
+<button class="sidebar-btn" id="sidebar-donate-btn"><i class="fas fa-heart"></i> 赞赏开发者</button>
+</div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="music-playlist-modal">
+<div class="modal-content playlist-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-list"></i> 播放列表</div>
+<button class="modal-close" id="music-playlist-close">&times;</button>
+</div>
+<div class="playlist-container" id="playlist-container">
+<div class="playlist-empty" id="playlist-empty">播放列表为空</div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="submit-score-modal">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-upload"></i> 提交分数</div>
+<button class="modal-close" id="submit-score-close">&times;</button>
+</div>
+<div class="modal-body">
+<div class="input-group">
+<label class="input-label">你的昵称</label>
+<input class="input-field" id="nickname-input" type="text" placeholder="输入昵称参与排行" maxlength="12">
+</div>
+<button class="modal-btn primary full-width" id="submit-score-btn"><i class="fas fa-upload"></i> 提交累计价值上榜</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="view-leaderboard-modal">
+<div class="modal-content leaderboard-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-ranking-star"></i> 本周排行榜</div>
+<button class="modal-close" id="view-leaderboard-close">&times;</button>
+</div>
+<div class="modal-body leaderboard-modal-body">
+<div class="leaderboard-list" id="leaderboard-list">
+<div class="leaderboard-loading"><i class="fas fa-spinner fa-spin"></i> 加载中...</div>
+</div>
+</div>
+<div class="modal-footer leaderboard-modal-footer">
+<button class="modal-btn refresh-btn" id="refresh-leaderboard-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
+<button class="modal-btn danger clear-btn" id="clear-my-record-btn"><i class="fas fa-trash-can"></i> 清除</button>
+<button class="modal-btn primary upload-btn" id="upload-my-score-btn"><i class="fas fa-upload"></i> 上传</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="nickname-modal">
+<div class="modal-content nickname-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-user-pen"></i> 修改昵称</div>
+<button class="modal-close" id="nickname-modal-close">&times;</button>
+</div>
+<div class="modal-body nickname-modal-body">
+<div class="nickname-input-wrapper">
+<input type="text" id="nickname-modal-input" placeholder="输入新昵称" maxlength="12" autocomplete="off">
+<span id="nickname-input-counter">0/12</span>
+</div>
+</div>
+<div class="modal-footer nickname-modal-footer">
+<button class="modal-btn" id="nickname-modal-cancel">取消</button>
+<button class="modal-btn primary" id="nickname-modal-confirm">确认修改</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="tutorial-modal">
+<div class="modal-content tutorial-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-graduation-cap"></i> 新手教程</div>
+<button class="modal-close" id="tutorial-modal-close">&times;</button>
+</div>
+<div class="modal-body tutorial-modal-body">
+<p><i class="fas fa-hand-pointer tutorial-icon"></i>点击 <strong>"打开保险"</strong> 按钮开始搜索物品</p>
+<p><i class="fas fa-redo tutorial-icon"></i>点击 <strong>"重置"</strong> 清空当前保险箱内容</p>
+<p><i class="fas fa-pause tutorial-icon"></i>点击 <strong>"暂停搜索"</strong> 停止搜索物品</p>
+<p><i class="fas fa-volume-up tutorial-icon"></i>点击 <strong>"我出货了"</strong> 播放特遣语音</p>
+<p><i class="fas fa-bars tutorial-icon"></i>点击 <strong>"更多"</strong> 打开侧边栏查看更多功能</p>
+<p><i class="fas fa-user tutorial-icon"></i>在侧边栏 <strong>"个人数据"</strong> 可修改昵称和头像</p>
+<p><i class="fas fa-trophy tutorial-icon"></i>在 <strong>"排行榜"</strong> 上传数据与其他特遣比拼</p>
+<p><i class="fas fa-font tutorial-icon"></i>在 <strong>"字体切换"</strong> 更换字体风格</p>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="password-modal">
+<div class="modal-content password-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-lock"></i> Item pool management</div>
+<button class="modal-close" id="password-modal-close">&times;</button>
+</div>
+<div class="modal-body password-modal-body">
+<div class="password-input-wrapper">
+<input type="password" id="password-input" placeholder="Please enter the password" autocomplete="off">
+</div>
+<div id="password-error">Password error</div>
+</div>
+<div class="modal-footer password-modal-footer">
+<button class="modal-btn" id="password-modal-cancel">Cancel</button>
+<button class="modal-btn primary" id="password-modal-confirm">Confirm</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="item-control-modal">
+<div class="modal-content item-control-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-boxes"></i> Item pool management</div>
+<button class="modal-close" id="item-control-close">&times;</button>
+</div>
+<div class="modal-body item-control-modal-body">
+<div class="item-control-toolbar">
+<div class="search-wrapper">
+<i class="fas fa-search search-icon"></i>
+<input type="text" id="item-search-input" placeholder="Search for item name....">
+</div>
+<div class="custom-dropdown" id="rarity-dropdown">
+<div class="custom-dropdown-select" id="rarity-dropdown-trigger">
+<span id="rarity-dropdown-text">all</span>
+<i class="fas fa-chevron-down custom-dropdown-icon"></i>
+</div>
+<div class="dropdown-menu" id="rarity-dropdown-menu">
+<div class="dropdown-item selected" data-value="all"><span class="dot dot-all"></span>all</div>
+<div class="dropdown-item" data-value="white"><span class="dot dot-white"></span>white</div>
+<div class="dropdown-item" data-value="purple"><span class="dot dot-purple"></span>purple</div>
+<div class="dropdown-item" data-value="gold"><span class="dot dot-gold"></span>gold</div>
+<div class="dropdown-item" data-value="orange"><span class="dot dot-orange"></span>orange</div>
+<div class="dropdown-item" data-value="red"><span class="dot dot-red"></span>red</div>
+</div>
+</div>
+</div>
+<div id="item-control-list"></div>
+</div>
+<div class="modal-footer item-control-modal-footer">
+<button class="modal-btn disable-btn" id="disable-all-items-btn"><i class="fas fa-ban"></i>Disable all</button>
+<button class="modal-btn primary enable-btn" id="enable-all-items-btn"><i class="fas fa-check"></i>All open</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="bg-select-modal">
+<div class="modal-content bg-select-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-palette"></i> 选择背景</div>
+<button class="modal-close" id="bg-select-close">&times;</button>
+</div>
+<div class="modal-body bg-select-modal-body">
+<div class="bg-preview-container">
+<button class="bg-nav-btn" id="bg-prev"><i class="fas fa-chevron-left"></i></button>
+<div class="bg-preview-image-wrapper">
+<img id="bg-preview-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="背景预览">
+</div>
+<button class="bg-nav-btn" id="bg-next"><i class="fas fa-chevron-right"></i></button>
+</div>
+<div class="bg-name-display" id="bg-name-display">默认背景</div>
+<div class="bg-indicators" id="bg-indicators"></div>
+</div>
+<div class="modal-footer bg-select-modal-footer" style="display:flex;justify-content:center;align-items:center;gap:10px;padding:10px 16px;">
+<button class="modal-btn" id="bg-preview-btn" style="width:100px!important;height:30px!important;min-width:100px!important;max-width:100px!important;min-height:30px!important;font-size:13px!important;padding:4px 12px!important;line-height:1!important;"><i class="fas fa-play"></i> 预览</button>
+<button class="modal-btn" id="bg-buy-btn" style="width:100px!important;height:30px!important;min-width:100px!important;max-width:100px!important;min-height:30px!important;font-size:13px!important;padding:4px 12px!important;line-height:1!important;"><i class="fas fa-shopping-cart"></i> 购买</button>
+<button class="modal-btn primary" id="bg-confirm-btn" style="width:100px!important;height:30px!important;min-width:100px!important;max-width:100px!important;min-height:30px!important;font-size:13px!important;padding:4px 12px!important;line-height:1!important;"><i class="fas fa-hand-pointer"></i> 切换</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="accumulated-value-modal">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-coins"></i> Edit accumulated value</div>
+<button class="modal-close" id="accumulated-value-close">&times;</button>
+</div>
+<div class="modal-body">
+<div class="input-group">
+<label class="input-label">Accumulated value</label>
+<input class="input-field" id="accumulated-value-input" type="text" placeholder="For Example: 500000、1.5M、200K" autocomplete="off">
+</div>
+<div id="accumulated-value-error" style="color:#ef4444;font-size:13px;display:none;margin-top:8px;"></div>
+</div>
+<div class="modal-footer">
+<button class="modal-btn" id="accumulated-value-cancel">Cancel</button>
+<button class="modal-btn primary" id="accumulated-value-confirm">Confirm</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="title-modal">
+<div class="modal-content title-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-medal"></i> 段位</div>
+<button class="modal-close" id="title-modal-close">&times;</button>
+</div>
+<div class="modal-body title-modal-body">
+<div class="title-layout">
+<div class="title-left">
+<div class="title-current-display">
+<span class="title-current-label">当前段位</span>
+<span class="title-current-name" id="title-current-name">暗区新锐</span>
+</div>
+<div class="title-progress-section">
+<div class="title-progress-header">
+<span>下一个段位进度</span>
+<span id="title-next-target">1M</span>
+</div>
+<div class="title-progress-bar-container">
+<div class="title-progress-bar" id="title-progress-bar"></div>
+</div>
+<div class="title-progress-text" id="title-progress-text">0 / 1,000,000</div>
+</div>
+</div>
+<div class="title-right">
+<div class="title-list-header">全部段位</div>
+<div class="title-list" id="title-list"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="gm-delete-by-uid-modal">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-user-minus"></i> Delete leaderboard by UID</div>
+<button class="modal-close" id="gm-delete-by-uid-close">&times;</button>
+</div>
+<div class="modal-body">
+<div class="input-group">
+<label class="input-label">UID</label>
+<input class="input-field" id="gm-delete-uid-input" type="text" placeholder="Enter UID to delete" autocomplete="off">
+</div>
+<div id="gm-delete-uid-error" style="color:#ef4444;font-size:13px;display:none;margin-top:8px;"></div>
+</div>
+<div class="modal-footer">
+<button class="modal-btn" id="gm-delete-by-uid-cancel">Cancel</button>
+<button class="modal-btn danger" id="gm-delete-by-uid-confirm"><i class="fas fa-trash"></i> Delete</button>
+</div>
+</div>
+</div>
+<audio id="open-safe-audio" preload="auto"><source src="audio/open-safe.mp3" type="audio/mpeg"></audio>
+<audio id="reset-game-audio" preload="auto"><source src="audio/reset-game.mp3" type="audio/mpeg"></audio>
+<audio id="click-audio" preload="auto"><source src="audio/click.mp3" type="audio/mpeg"></audio>
+<audio id="special-audio-1" preload="auto"><source src="audio/我出货了1.mp3" type="audio/mpeg"></audio>
+<audio id="special-audio-2" preload="auto"><source src="audio/我出货了2.mp3" type="audio/mpeg"></audio>
+<audio id="special-audio-3" preload="auto"><source src="audio/我出货了3.mp3" type="audio/mpeg"></audio>
+<audio id="special-audio-4" preload="auto"><source src="audio/我出货了4.mp3" type="audio/mpeg"></audio>
+<div id="item-sound-pool"></div>
+<div class="toast-message" id="toast-message"></div>
+<div class="game-container hidden" id="game-container">
+<div class="game-title">
+<h1><i class="fas fa-vault"></i> 暗区突围保险模拟试玩版</h1>
+</div>
+<div class="main-content">
+<div class="left-panel">
+<div class="stats-section">
+<div class="stats-grid">
+<div class="stat-item">
+<div class="stat-label">总价值 :</div>
+<div class="stat-value" id="total-value">¥0</div>
+</div>
+<div class="stat-item">
+<div class="stat-label">最高价值 :</div>
+<div class="stat-value" id="highest-value">¥0</div>
+</div>
+</div>
+</div>
+<div class="control-section">
+<button id="open-safe-btn" class="btn btn-open"><i class="fas fa-hand-pointer"></i> 打开保险</button>
+<button id="reset-btn" class="btn btn-reset"><i class="fas fa-redo"></i> 重置</button>
+</div>
+<button id="pause-search-btn" class="btn btn-sound-2"><i class="fas fa-pause"></i> 暂停搜索</button>
+<div class="control-section">
+<button id="play-sound-btn" class="btn btn-sound"><i class="fas fa-volume-up"></i> 我出货了</button>
+<button class="more-button" id="more-button"><i class="fas fa-ellipsis-h"></i> 更多<span id="more-btn-badge" class="red-dot-number"></span></button>
+</div>
+</div>
+<div class="center-panel">
+<div class="safe-section">
+<div class="safe-container">
+<div class="safe-grid" id="safe-grid"></div>
+</div>
+<div class="grid-info" id="grid-info">完整版请前往交流群下载，交流群 : 1082453829</div>
+</div>
+</div>
+<div class="right-panel">
+<div class="inventory-section">
+<div class="inventory-container">
+<div class="inventory-list" id="inventory-list">
+<div class="inventory-empty">尚未发现任何物品</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="credits-modal">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-users"></i> 制作人员列表</div>
+<button class="modal-close" id="credits-close">&times;</button>
+</div>
+<div class="compact-credits-container">
+<div class="credits-avatar-container"><img id="credits-avatar" class="credits-avatar" src="" alt="制作人员头像"></div>
+</div>
+<div class="compact-indicators" id="credits-indicators"></div>
+<div class="compact-person-info">
+<div class="compact-person-name" id="credits-name"></div>
+<div class="compact-person-role" id="credits-role"></div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="announcement-modal">
+<div class="modal-content announcement-modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-bullhorn"></i> 公告</div>
+<button class="modal-close" id="announcement-close">&times;</button>
+</div>
+<div class="announcement-content">
+<div class="announcement-body">
+<p class="announcement-welcome">欢迎使用暗区突围保险箱模拟 v1.6.0！</p>
+<div class="announcement-divider"></div>
+<p class="announcement-subtitle"><i class="fas fa-star"></i> 更新内容：</p>
+<ul class="announcement-list">
+<li><span class="announcement-tag new">NEW</span> 新增了部分可更换的背景</li>
+<li><span class="announcement-tag new">NEW</span> 新增了样本合成台</li>
+<li><span class="announcement-tag improve">IMPROVE</span> 优化了道具名称逻辑</li>
+<li><span class="announcement-tag optimize">OPT</span> 优化了ELS获取方式，改为了样本合成，现在保险内不再产出成品，只产出对应样本</li>
+<li><span class="announcement-tag optimize">OPT</span> 优化了界面加载速度</li>
+<li><span class="announcement-tag optimize">OPT</span> 优化了榜单系统安全性</li>
+<li><span class="announcement-tag optimize">OPT</span> 优化了违禁词系统</li>
+<li><span class="announcement-tag optimize">ADV</span> 制作组招人，有意者联系QQ2312367270，需有前端开发基础</li>
+</ul>
+</div>
+<div class="announcement-footer">
+<i class="fas fa-calendar-alt"></i> 2026-09-09
+</div>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="donate-modal">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title"><i class="fas fa-heart"></i> 赞赏开发者</div>
+<button class="modal-close" id="donate-close">&times;</button>
+</div>
+<div class="image-carousel">
+<div class="carousel-images" id="donate-images"></div>
+</div>
+</div>
+</div>
+<div id="item-tooltip" class="item-tooltip">
+<div class="tooltip-left">
+<div class="quality-bg" id="tooltip-quality-bg"></div>
+<img class="tooltip-img" id="tooltip-img" src="" alt="">
+</div>
+<div class="tooltip-right">
+<div class="tooltip-name" id="tooltip-name"></div>
+<div class="tooltip-price-row">
+<img src="images/柯恩币.png" class="coin-icon" alt="柯恩币">
+<span id="tooltip-price"></span>
+</div>
+<div class="tooltip-desc" id="tooltip-desc"></div>
+</div>
+</div>
+<script>
+(function() {
+    function e(e, t) {
+        if (!t) t = 1;
+        var n = '1',
+            r = '';
+        for (var o = 0; o < t; o++) r += n.charAt(Math.floor(Math.random() * n.length));
+        return r
+    }
+    var t = localStorage.getItem('ab_uid_clean');
+    if (!t) {
+        t = e(8);
+        localStorage.setItem('ab_uid_clean', t)
+    }
+    var n = document.getElementById('metaUidDisplay');
+    if (n) n.textContent = t
+})();
+</script>
+<script>
+document.querySelectorAll('.sidebar-section-header[data-target]').forEach(function(header) {
+    var section = header.parentElement;
+    if (section.classList.contains('default-open')) return;
+    header.addEventListener('click', function(e) {
+        if (e.target.closest('.red-dot-number')) return;
+        if (section.classList.contains('hidden-section')) return;
+        section.classList.toggle('expanded');
+    });
+});
+</script>
+<script>
+(function() {
+    var STORAGE_KEY = 'ab_skip_loading';
+    var enabled = localStorage.getItem(STORAGE_KEY) === 'true';
+    window.__SKIP_LOADING__ = enabled;
+
+    var toggleBtn = document.getElementById('skip-loading-toggle');
+    var toggleText = document.getElementById('skip-loading-toggle-text');
+    var statusEl = document.getElementById('skip-loading-status');
+
+    function render() {
+        if (statusEl) statusEl.textContent = enabled ? '开' : '关';
+        if (toggleText) toggleText.textContent = enabled ? '关闭跳过加载登录' : '开启跳过加载登录';
+    }
+
+    function hideMuteBtn() {
+        var muteBtn = document.getElementById('mute-btn');
+        if (muteBtn) muteBtn.style.display = 'none';
+    }
+
+    function applySkipNow() {
+        var loadingOverlay = document.getElementById('loading-overlay');
+        var gameContainer = document.getElementById('game-container');
+        var videoBg = document.querySelector('.loading-video-bg');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+            loadingOverlay.style.display = 'none';
+            loadingOverlay.style.opacity = '';
+            loadingOverlay.style.transition = '';
+        }
+        if (videoBg) videoBg.remove();
+        hideMuteBtn();
+        if (gameContainer) {
+            gameContainer.classList.remove('hidden');
+            gameContainer.style.display = 'block';
+            gameContainer.style.opacity = '1';
+        }
+        if (typeof window.initLeaderboard === 'function') window.initLeaderboard();
+        if (typeof AchievementSystem !== 'undefined') AchievementSystem.init();
+    }
+    window.__applySkipLoading = applySkipNow;
+    render();
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            enabled = !enabled;
+            localStorage.setItem(STORAGE_KEY, enabled ? 'true' : 'false');
+            window.__SKIP_LOADING__ = enabled;
+            render();
+            if (enabled) applySkipNow();
+            if (typeof window.showToast === 'function') {
+                window.showToast(enabled ? '已开启跳过加载登录，下次启动直接进入' : '已关闭跳过加载登录，下次启动显示加载页');
+            }
+        });
+    }
+
+    if (enabled) {
+        var observer = new MutationObserver(function() {
+            var muteBtn = document.getElementById('mute-btn');
+            if (muteBtn) {
+                muteBtn.style.display = 'none';
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true });
+        setTimeout(function() {
+            observer.disconnect();
+            hideMuteBtn();
+        }, 5000);
+    }
+})();
+</script>
+<script src="libs/jquery.js"></script>
+<script src="libs/lodash.js"></script>
+<script src="libs/GSAP.js"></script>
+<script src="js/inline-scripts.js"></script>
+<script src="js/script.js"></script>
+<script src="js/music.js"></script>
+<script src="js/main.js"></script>
+<script src="js/违禁词.js"></script>
+<script src="js/mail-system.js"></script>
+<script src="js/synthesis.js"></script>
+<script src="js/list-scripts.js"></script>
+<script>
+window.__loadDebugConsole = function () {
+    if (window.__debugConsoleLoaded) return;
+    window.__debugConsoleLoaded = true;
+    var s = document.createElement('script');
+    s.src = 'js/debug-console.js';
+    s.async = true;
+    s.onload = function () { console.log('[DebugConsole] loaded on demand'); };
+    s.onerror = function () { console.warn('[DebugConsole] failed to load'); };
+    document.body.appendChild(s);
+};
+</script>
+<script>
+(function() {
+    var e = 'Arena Breakout1',
+        t = 'Arena Breakout2',
+        n = document.getElementById('font-arena1'),
+        r = document.getElementById('font-arena2'),
+        o = localStorage.getItem('ab_font_preference') || 'arena1';
+
+    function a(n) {
+        var r = n === 'arena1' ? e : t;
+        document.body.style.fontFamily = r + ', Microsoft YaHei, sans-serif';
+        document.querySelectorAll('*').forEach(function(e) {
+            if (e.classList && (e.classList.contains('fas') || e.classList.contains('far') || e.classList.contains('fab') || e.classList.contains('fa') || e.classList.contains('font-preview'))) return;
+            e.style.setProperty('font-family', r + ', Microsoft YaHei, sans-serif', 'important')
+        });
+        n === 'arena1' ? u() : v();
+        localStorage.setItem('ab_font_preference', n);
+        o = n
+    }
+
+    function u() { n.classList.add('active');
+        r.classList.remove('active') }
+
+    function v() { r.classList.add('active');
+        n.classList.remove('active') }
+    a(o);
+    n.addEventListener('click', function() {
+        if (o !== 'arena1') {
+            a('arena1');
+            if (typeof window.showToast === 'function') window.showToast('已切换到国际服字体')
+        }
+    });
+    r.addEventListener('click', function() {
+        if (o !== 'arena2') {
+            a('arena2');
+            if (typeof window.showToast === 'function') window.showToast('已切换到国服字体')
+        }
+    })
+})();
+</script>
+<script>
+const miniGameBtn = document.getElementById('sidebar-minigame-btn');
+if (miniGameBtn) {
+    miniGameBtn.addEventListener('click', function () {
+        window.location.href = 'MiniGame/index.html';
+    });
+}
+</script>
+<script>
+(function() {
+    if (localStorage.getItem('ab_gm_unlocked') !== 'true') return;
+
+    var topRightMeta = document.getElementById('topRightMeta');
+    var fpsSpan = document.createElement('span');
+    fpsSpan.id = 'device-info-fps';
+    topRightMeta.insertBefore(fpsSpan, topRightMeta.firstChild);
+    fpsSpan.style.fontSize = '6px';
+    var ua = navigator.userAgent;
+    var cores = navigator.hardwareConcurrency || '?';
+    var mem = navigator.deviceMemory ? navigator.deviceMemory + 'GB' : '';
+    var dpr = window.devicePixelRatio || 1;
+    var w = window.screen.width;
+    var h = window.screen.height;
+
+    var os = 'Unknown OS';
+    if (/Windows NT 10/.test(ua)) os = 'Windows 10/11';
+    else if (/Windows NT/.test(ua)) os = 'Windows';
+    else if (/Mac OS X (\d+[._]\d+)/.test(ua)) { var m = ua.match(/Mac OS X ([\d._]+)/); os = 'macOS ' + (m ? m[1].replace(/_/g, '.') : ''); }
+    else if (/Android (\d+)/.test(ua)) { var am = ua.match(/Android (\d+)/); os = 'Android ' + am[1]; }
+    else if (/iPhone OS (\d+)/.test(ua)) { var im = ua.match(/OS (\d+)/); os = 'iOS ' + (im ? im[1] : ''); }
+    else if (/iPad/.test(ua)) os = 'iPadOS';
+    else if (/Linux/.test(ua)) os = 'Linux';
+
+    var browser = 'Unknown Browser';
+    if (/Edg\//.test(ua)) browser = 'Edge';
+    else if (/Chrome\//.test(ua)) browser = 'Chrome';
+    else if (/Firefox\//.test(ua)) browser = 'Firefox';
+    else if (/Safari\//.test(ua)) browser = 'Safari';
+    else if (/OPR\//.test(ua)) browser = 'Opera';
+
+    var info = os + ' / ' + browser + ' / ' + cores + '核' + (mem ? ' / ' + mem : '') + ' / ' + w + 'x' + h;
+
+    var frames = 0;
+    var lastTime = performance.now();
+    var fps = 0;
+
+    function tick() {
+        frames++;
+        var now = performance.now();
+        if (now - lastTime >= 1000) {
+            fps = frames;
+            frames = 0;
+            lastTime = now;
+        }
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    function update() {
+        fpsSpan.textContent = info + ' / ' + fps + ' FPS';
+        setTimeout(update, 100);
+    }
+    update();
+})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('ab_gm_unlocked') === 'true') {
+        document.body.setAttribute('data-gm', '1');
+        var gm = document.getElementById('gm-debug-section');
+        if (gm) gm.style.display = 'block';
+        if (typeof window.__loadDebugConsole === 'function') {
+            window.__loadDebugConsole();
+        }
+    }
+});
+</script>
+<script>
+(function() {
+    const SUPABASE_URL = 'https://fgkfgyudwbhmmrqvtfup.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZna2ZneXVkd2JobW1ycXZ0ZnVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3MTkyODAsImV4cCI6MjA5NzI5NTI4MH0.zcnusHgHSUK3AogYAXaR-9Q2KWuGK6_V7wwhgj1D1PI';
+
+    function getMonday(date) {
+        const d = new Date(date);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(d.setDate(diff));
+        const y = monday.getFullYear();
+        const m = String(monday.getMonth() + 1).padStart(2, '0');
+        const dd = String(monday.getDate()).padStart(2, '0');
+        return `${y}-${m}-${dd}`;
+    }
+
+    const gmDeleteByUidBtn = document.getElementById('gm-delete-by-uid-btn');
+    const gmDeleteByUidModal = document.getElementById('gm-delete-by-uid-modal');
+    const gmDeleteByUidClose = document.getElementById('gm-delete-by-uid-close');
+    const gmDeleteByUidCancel = document.getElementById('gm-delete-by-uid-cancel');
+    const gmDeleteByUidConfirm = document.getElementById('gm-delete-by-uid-confirm');
+    const gmDeleteUidInput = document.getElementById('gm-delete-uid-input');
+    const gmDeleteUidError = document.getElementById('gm-delete-uid-error');
+
+    function showToast(msg, duration) {
+        duration = duration || 5060;
+        const el = document.getElementById('toast-message');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._hideTimer);
+        el._hideTimer = setTimeout(() => {
+            el.classList.remove('show');
+        }, duration);
+    }
+
+    function openGmDeleteModal() {
+        if (gmDeleteUidInput) gmDeleteUidInput.value = '';
+        if (gmDeleteUidError) gmDeleteUidError.style.display = 'none';
+        if (gmDeleteByUidModal) {
+            gmDeleteByUidModal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                gmDeleteByUidModal.classList.add('show');
+                setTimeout(() => { if (gmDeleteUidInput) gmDeleteUidInput.focus(); }, 300);
+            });
+        }
+    }
+
+    function closeGmDeleteModal() {
+        if (gmDeleteByUidModal) {
+            gmDeleteByUidModal.classList.remove('show');
+            setTimeout(() => { gmDeleteByUidModal.style.display = 'none'; }, 500);
+        }
+    }
+
+    async function deleteByUid() {
+        if (!gmDeleteUidInput) return;
+        const uid = gmDeleteUidInput.value.trim();
+        if (!uid) {
+            if (gmDeleteUidError) {
+                gmDeleteUidError.textContent = 'Please enter a UID';
+                gmDeleteUidError.style.display = 'block';
+            }
+            return;
+        }
+        if (uid.length < 4 || uid.length > 20) {
+            if (gmDeleteUidError) {
+                gmDeleteUidError.textContent = 'Invalid UID length (4-20 characters)';
+                gmDeleteUidError.style.display = 'block';
+            }
+            return;
+        }
+        if (gmDeleteUidConfirm) {
+            gmDeleteUidConfirm.disabled = true;
+            gmDeleteUidConfirm.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+        }
+        try {
+            const weekStart = getMonday(new Date());
+            const deleteUrl = SUPABASE_URL + '/rest/v1/weekly_board?uid=eq.' + encodeURIComponent(uid) + '&week_start=eq.' + encodeURIComponent(weekStart);
+            const deleteRes = await fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                }
+            });
+            const verifyRes = await fetch(SUPABASE_URL + '/rest/v1/weekly_board?uid=eq.' + encodeURIComponent(uid) + '&week_start=eq.' + encodeURIComponent(weekStart) + '&limit=1', {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                }
+            });
+            const remaining = await verifyRes.json();
+            if (!remaining || remaining.length === 0) {
+                showToast('Successfully deleted records for UID: ' + uid);
+                closeGmDeleteModal();
+            } else {
+                if (gmDeleteUidError) {
+                    gmDeleteUidError.textContent = 'Delete failed: record still exists (RLS policy may block anon delete)';
+                    gmDeleteUidError.style.display = 'block';
+                } else {
+                    showToast('Delete failed: record still exists', 5200);
+                }
+            }
+        } catch (e) {
+            if (gmDeleteUidError) {
+                gmDeleteUidError.textContent = 'Network error: ' + e.message;
+                gmDeleteUidError.style.display = 'block';
+            }
+        } finally {
+            if (gmDeleteUidConfirm) {
+                gmDeleteUidConfirm.disabled = false;
+                gmDeleteUidConfirm.innerHTML = '<i class="fas fa-trash"></i> Delete';
+            }
+        }
+    }
+
+    if (gmDeleteByUidBtn) {
+        gmDeleteByUidBtn.addEventListener('click', openGmDeleteModal);
+    }
+    if (gmDeleteByUidClose) {
+        gmDeleteByUidClose.addEventListener('click', closeGmDeleteModal);
+    }
+    if (gmDeleteByUidCancel) {
+        gmDeleteByUidCancel.addEventListener('click', closeGmDeleteModal);
+    }
+    if (gmDeleteByUidConfirm) {
+        gmDeleteByUidConfirm.addEventListener('click', deleteByUid);
+    }
+    if (gmDeleteByUidModal) {
+        gmDeleteByUidModal.addEventListener('click', function(e) {
+            if (e.target === gmDeleteByUidModal) closeGmDeleteModal();
+        });
+    }
+    if (gmDeleteUidInput) {
+        gmDeleteUidInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                deleteByUid();
+            }
+        });
+    }
+})();
+</script>
+</body>
+</html>
